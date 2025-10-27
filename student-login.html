@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Student Login - Soham</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #e0f2fe, #f0f9ff);
+      color: #333;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    header {
+      background: #2563eb;
+      color: white;
+      padding: 15px 40px;
+      text-align: center;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    }
+
+    header h1 {
+      font-size: 1.8rem;
+      font-weight: bold;
+    }
+
+    .login-container {
+      max-width: 400px;
+      margin: 80px auto;
+      background: white;
+      padding: 40px 30px;
+      border-radius: 18px;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+      text-align: center;
+      flex-grow: 1;
+    }
+
+    .login-container h2 {
+      color: #2563eb;
+      margin-bottom: 25px;
+      font-size: 1.6rem;
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+      text-align: left;
+    }
+
+    .form-group label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 600;
+      color: #1e40af;
+      font-size: 1rem;
+    }
+
+    .login-container input {
+      width: 100%;
+      padding: 12px;
+      border-radius: 8px;
+      border: 1px solid #d1d5db;
+      font-size: 1rem;
+      outline: none;
+      transition: all 0.3s ease;
+    }
+
+    .login-container input:focus {
+      border: 1px solid #2563eb;
+      box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.2);
+    }
+
+    .login-btn {
+      width: 100%;
+      padding: 12px;
+      background: #10b981;
+      color: white;
+      border: none;
+      border-radius: 25px;
+      font-size: 1rem;
+      font-weight: 500;
+      cursor: pointer;
+      margin-top: 15px;
+      transition: background 0.3s;
+    }
+
+    .login-btn:hover {
+      background: #059669;
+    }
+
+    .error {
+      color: #dc2626;
+      margin-top: 10px;
+      font-size: 0.9rem;
+      text-align: center;
+      padding: 8px;
+      background-color: #fef2f2;
+      border-radius: 6px;
+      border: 1px solid #fecaca;
+    }
+
+    .success {
+      color: #065f46;
+      margin-top: 10px;
+      font-size: 0.9rem;
+      text-align: center;
+      padding: 8px;
+      background-color: #f0fdf4;
+      border-radius: 6px;
+      border: 1px solid #bbf7d0;
+    }
+
+    .info-text {
+      font-size: 0.85rem;
+      color: #6b7280;
+      margin-top: 20px;
+      text-align: center;
+    }
+
+    .back-link {
+      display: inline-block;
+      color: #2563eb;
+      text-decoration: none;
+      margin-top: 15px;
+      font-size: 0.9rem;
+    }
+
+    .back-link:hover {
+      text-decoration: underline;
+    }
+
+    footer {
+      padding: 20px;
+      text-align: center;
+      background: #2563eb;
+      color: white;
+      font-size: 0.9rem;
+      margin-top: auto;
+    }
+
+    .student-icon {
+      font-size: 3rem;
+      margin-bottom: 15px;
+      color: #2563eb;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Soham Student Portal</h1>
+  </header>
+
+  <div class="login-container">
+    <div class="student-icon">👨‍🎓</div>
+    <h2>Student Login</h2>
+    <form id="loginForm">
+      <div class="form-group">
+        <label for="studentId">Student ID</label>
+        <input type="text" id="studentId" placeholder="Enter your Student ID" required />
+      </div>
+      
+      <div class="form-group">
+        <label for="password">Password</label>
+        <input type="password" id="password" placeholder="Enter your Password" required />
+      </div>
+      
+      <button type="submit" class="login-btn">Login</button>
+      <p id="errorMsg" class="error"></p>
+      <p id="successMsg" class="success"></p>
+    </form>
+    
+    <a href="role-selection.html" class="back-link">← Back to Role Selection</a>
+    
+    <p class="info-text">Please contact administration if you've forgotten your credentials</p>
+  </div>
+
+  <footer>
+    <p>&copy; 2025 Soham Educational Institute. All rights reserved.</p>
+  </footer>
+
+  <script>
+    const form = document.getElementById("loginForm");
+    const errorMsg = document.getElementById("errorMsg");
+    const successMsg = document.getElementById("successMsg");
+
+    // Sample student data with the requested credentials
+    const students = [
+      { studentId: "SOHAM2901", password: "290108", name: "Alex Johnson", grade: "10th Grade" },
+      { studentId: "S002", password: "student456", name: "Maria Garcia", grade: "11th Grade" },
+      { studentId: "S003", password: "student789", name: "David Chen", grade: "12th Grade" }
+    ];
+
+    form.addEventListener("submit", function(e) {
+      e.preventDefault();
+      errorMsg.textContent = "";
+      successMsg.textContent = "";
+      
+      const studentId = document.getElementById("studentId").value.trim();
+      const password = document.getElementById("password").value.trim();
+
+      // Validate inputs
+      if (!studentId || !password) {
+        errorMsg.textContent = "Please fill in all fields";
+        return;
+      }
+
+      // Check if user came from role selection
+      const userRole = localStorage.getItem("userRole");
+      if (userRole !== "student") {
+        errorMsg.textContent = "Please select student role first";
+        return;
+      }
+
+      // Simulate database lookup
+      const student = students.find(s => 
+        s.studentId === studentId && s.password === password
+      );
+
+      if (student) {
+        successMsg.textContent = `Login successful! Welcome, ${student.name}`;
+        
+        // Store student info
+        localStorage.setItem("currentStudent", JSON.stringify({
+          studentId: studentId,
+          name: student.name,
+          grade: student.grade,
+          role: "student"
+        }));
+        
+        // Set login status
+        localStorage.setItem("isLoggedIn", "true");
+        localStorage.setItem("username", student.name);
+        
+        // Redirect to index.html after a brief delay
+        setTimeout(() => {
+          window.location.href = "index.html";
+        }, 1500);
+      } else {
+        errorMsg.textContent = "Invalid Student ID or Password!";
+      }
+    });
+
+    // Check if user came from role selection
+    document.addEventListener('DOMContentLoaded', function() {
+      const userRole = localStorage.getItem("userRole");
+      const instituteCode = localStorage.getItem("instituteCode");
+      
+      if (!instituteCode) {
+        window.location.href = "institute-code.html";
+        return;
+      }
+      
+      if (userRole !== "student") {
+        window.location.href = "role-selection.html";
+        return;
+      }
+    });
+  </script>
+</body>
+</html>

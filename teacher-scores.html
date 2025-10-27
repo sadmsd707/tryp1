@@ -1,0 +1,1171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Student Scores - Soham Teacher Dashboard</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    body {
+      background: #f5f7fa;
+      color: #333;
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+
+    header {
+      background: #2563eb;
+      color: white;
+      padding: 15px 30px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+      position: relative;
+      z-index: 100;
+    }
+
+    header h1 {
+      font-size: 1.8rem;
+      font-weight: 700;
+    }
+
+    /* Hamburger Menu Styles */
+    .hamburger {
+      background: none;
+      border: none;
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      width: 30px;
+      height: 21px;
+      padding: 0;
+    }
+
+    .hamburger span {
+      display: block;
+      height: 3px;
+      width: 100%;
+      background-color: white;
+      border-radius: 3px;
+      transition: all 0.3s ease;
+    }
+
+    /* Side Navigation Panel */
+    .side-nav {
+      position: fixed;
+      top: 0;
+      right: -300px;
+      width: 300px;
+      height: 100vh;
+      background: linear-gradient(to bottom, #2563eb, #1e3a8a);
+      box-shadow: -5px 0 15px rgba(0, 0, 0, 0.1);
+      transition: right 0.4s ease;
+      z-index: 1000;
+      padding-top: 70px;
+    }
+
+    .side-nav.active {
+      right: 0;
+    }
+
+    .side-nav ul {
+      list-style: none;
+      padding: 0;
+    }
+
+    .side-nav ul li {
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .side-nav ul li a {
+      display: block;
+      color: white;
+      text-decoration: none;
+      padding: 15px 30px;
+      font-size: 1.1rem;
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .side-nav ul li a:hover {
+      background-color: rgba(255, 255, 255, 0.1);
+      padding-left: 40px;
+    }
+
+    .nav-icon {
+      font-size: 1.2rem;
+      width: 20px;
+      text-align: center;
+    }
+
+    .overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.5);
+      z-index: 999;
+      opacity: 0;
+      visibility: hidden;
+      transition: all 0.3s ease;
+    }
+
+    .overlay.active {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    /* Dashboard Styles */
+    .dashboard {
+      padding: 30px 20px;
+      max-width: 1200px;
+      margin: auto;
+    }
+
+    .welcome-section {
+      background: linear-gradient(to right, #2563eb, #1e3a8a);
+      color: white;
+      padding: 30px;
+      border-radius: 15px;
+      margin-bottom: 30px;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .welcome-section::before {
+      content: "";
+      position: absolute;
+      top: -50%;
+      right: -50%;
+      width: 100%;
+      height: 200%;
+      background: rgba(255, 255, 255, 0.1);
+      transform: rotate(30deg);
+    }
+
+    .welcome-section h2 {
+      font-size: 2.2rem;
+      margin-bottom: 10px;
+      position: relative;
+    }
+
+    .welcome-section p {
+      font-size: 1.2rem;
+      opacity: 0.9;
+      position: relative;
+    }
+
+    /* Dashboard Section */
+    .dashboard-section {
+      background: white;
+      border-radius: 15px;
+      padding: 30px;
+      margin-bottom: 30px;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+    }
+
+    .dashboard-section h3 {
+      color: #1e3a8a;
+      margin-bottom: 25px;
+      font-size: 1.5rem;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    /* Form Styles */
+    .form-row {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 20px;
+      margin-bottom: 25px;
+    }
+
+    .form-group {
+      margin-bottom: 0;
+    }
+
+    .form-group label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 600;
+      color: #1e3a8a;
+      font-size: 1rem;
+    }
+
+    .form-control {
+      width: 100%;
+      padding: 14px 16px;
+      border: 1px solid #d1d5db;
+      border-radius: 10px;
+      font-size: 1rem;
+      transition: all 0.3s ease;
+      background: #f8fafc;
+    }
+
+    .form-control:focus {
+      outline: none;
+      border-color: #2563eb;
+      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+      background: white;
+    }
+
+    select.form-control {
+      appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%231e3a8a' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 16px center;
+      padding-right: 45px;
+    }
+
+    /* Table Styles */
+    .data-table-container {
+      overflow-x: auto;
+      border-radius: 10px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    }
+
+    .data-table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 800px;
+    }
+
+    .data-table th {
+      background-color: #1e3a8a;
+      color: white;
+      padding: 16px 12px;
+      text-align: left;
+      font-weight: 600;
+      font-size: 0.95rem;
+    }
+
+    .data-table td {
+      padding: 14px 12px;
+      border-bottom: 1px solid #e2e8f0;
+    }
+
+    .data-table tr:hover {
+      background-color: rgba(37, 99, 235, 0.05);
+    }
+
+    .data-table tr:last-child td {
+      border-bottom: none;
+    }
+
+    /* Score indicators */
+    .score-high {
+      color: #10b981;
+      font-weight: 600;
+    }
+
+    .score-medium {
+      color: #f59e0b;
+      font-weight: 600;
+    }
+
+    .score-low {
+      color: #ef4444;
+      font-weight: 600;
+    }
+
+    /* Button Styles */
+    .btn {
+      background: #2563eb;
+      color: white;
+      border: none;
+      padding: 10px 18px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 600;
+      transition: all 0.3s ease;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      font-size: 0.9rem;
+    }
+
+    .btn:hover {
+      background: #1e3a8a;
+      transform: translateY(-1px);
+      box-shadow: 0 4px 8px rgba(37, 99, 235, 0.2);
+    }
+
+    .btn-small {
+      padding: 8px 14px;
+      font-size: 0.85rem;
+    }
+
+    .btn-outline {
+      background: transparent;
+      border: 1px solid #2563eb;
+      color: #2563eb;
+    }
+
+    .btn-outline:hover {
+      background: #2563eb;
+      color: white;
+    }
+
+    .btn-success {
+      background: #10b981;
+    }
+
+    .btn-success:hover {
+      background: #059669;
+    }
+
+    /* Stats Cards */
+    .stats-container {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 20px;
+      margin-bottom: 30px;
+    }
+
+    .stat-card {
+      background: white;
+      border-radius: 12px;
+      padding: 20px;
+      box-shadow: 0 3px 10px rgba(0,0,0,0.05);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+    }
+
+    .stat-icon {
+      font-size: 2.2rem;
+      margin-bottom: 10px;
+    }
+
+    .stat-value {
+      font-size: 1.8rem;
+      font-weight: 700;
+      color: #1e3a8a;
+      margin-bottom: 5px;
+    }
+
+    .stat-label {
+      color: #64748b;
+      font-size: 0.9rem;
+    }
+
+    /* Loading animation */
+    .loading {
+      display: inline-block;
+      width: 20px;
+      height: 20px;
+      border: 3px solid rgba(255,255,255,.3);
+      border-radius: 50%;
+      border-top-color: #fff;
+      animation: spin 1s ease-in-out infinite;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    /* Success Message */
+    .success-message {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      background: #10b981;
+      color: white;
+      padding: 15px 25px;
+      border-radius: 10px;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      z-index: 1000;
+      transform: translateX(150%);
+      transition: transform 0.3s ease;
+    }
+
+    .success-message.show {
+      transform: translateX(0);
+    }
+
+    .success-icon {
+      font-size: 1.5rem;
+    }
+
+    /* Empty State */
+    .empty-state {
+      text-align: center;
+      padding: 40px 20px;
+      color: #64748b;
+    }
+
+    .empty-icon {
+      font-size: 4rem;
+      margin-bottom: 15px;
+      opacity: 0.5;
+    }
+
+    .empty-state h3 {
+      color: #475569;
+      margin-bottom: 10px;
+    }
+
+    /* Add Score Form */
+    .add-score-form {
+      background: #f8fafc;
+      border-radius: 10px;
+      padding: 25px;
+      margin-bottom: 25px;
+      border: 1px dashed #cbd5e1;
+    }
+
+    .add-score-form h4 {
+      color: #1e3a8a;
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    footer {
+      background: #1e3a8a;
+      color: white;
+      text-align: center;
+      padding: 30px;
+      margin-top: 50px;
+    }
+
+    footer p {
+      font-size: 1rem;
+    }
+
+    /* Responsive styles */
+    @media (max-width: 768px) {
+      header {
+        padding: 15px 20px;
+      }
+      
+      .welcome-section h2 {
+        font-size: 1.8rem;
+      }
+      
+      .welcome-section p {
+        font-size: 1rem;
+      }
+      
+      .form-row {
+        grid-template-columns: 1fr;
+      }
+      
+      .stats-container {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    @media (max-width: 480px) {
+      .stats-container {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* Filter Info Message */
+    .filter-info {
+      background: #dbeafe;
+      border: 1px solid #2563eb;
+      border-radius: 8px;
+      padding: 12px 16px;
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .filter-info-icon {
+      color: #2563eb;
+      font-size: 1.2rem;
+    }
+
+    /* Error Message */
+    .error-message {
+      background: #fee2e2;
+      border: 1px solid #fecaca;
+      border-radius: 8px;
+      padding: 12px 16px;
+      margin-top: 10px;
+      color: #dc2626;
+      display: none;
+    }
+
+    .error-message.show {
+      display: block;
+    }
+
+    /* Active Filter Indicator */
+    .active-filters {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 15px;
+    }
+
+    .filter-tag {
+      background: #2563eb;
+      color: white;
+      padding: 5px 12px;
+      border-radius: 20px;
+      font-size: 0.85rem;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .filter-tag .remove {
+      cursor: pointer;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Soham - Teacher Dashboard</h1>
+    <button class="hamburger" id="hamburger">
+      <span></span>
+      <span></span>
+      <span></span>
+    </button>
+  </header>
+
+  <!-- Side Navigation -->
+  <div class="side-nav" id="sideNav">
+    <ul>
+      <li><a href="teacher-dashboard.html"><span class="nav-icon">📊</span>Dashboard</a></li>
+      <li><a href="teacher-classes.html"><span class="nav-icon">🏫</span>My Classes</a></li>
+      <li><a href="add-student.html"><span class="nav-icon">👨‍🎓</span>Add Student</a></li>
+      <li><a href="create-test.html"><span class="nav-icon">✏️</span>Create Test</a></li>
+      <li><a href="teacher-scores.html" class="active"><span class="nav-icon">📝</span>Student Scores</a></li>
+      <li><a href="teacher-resources.html"><span class="nav-icon">📚</span>Resources</a></li>
+      <li><a href="my-account.html"><span class="nav-icon">👤</span>My Account</a></li>
+      <li><a href="#" onclick="logout()"><span class="nav-icon">🚪</span>Logout</a></li>
+    </ul>
+  </div>
+
+  <!-- Overlay for closing the menu when clicking outside -->
+  <div class="overlay" id="overlay"></div>
+
+  <!-- Success Message -->
+  <div class="success-message" id="successMessage">
+    <span class="success-icon">✅</span>
+    <span id="successText">Filters applied successfully!</span>
+  </div>
+
+  <main class="dashboard">
+    <section class="welcome-section">
+      <h2>Student Scores</h2>
+      <p>View and analyze student performance across all tests</p>
+    </section>
+
+    <!-- Statistics Cards -->
+    <div class="stats-container">
+      <div class="stat-card">
+        <div class="stat-icon">📊</div>
+        <div class="stat-value" id="totalTests">0</div>
+        <div class="stat-label">Total Tests</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon">👥</div>
+        <div class="stat-value" id="totalStudents">0</div>
+        <div class="stat-label">Students</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon">📈</div>
+        <div class="stat-value" id="avgScore">0%</div>
+        <div class="stat-label">Average Score</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon">🎯</div>
+        <div class="stat-value" id="topScore">0%</div>
+        <div class="stat-label">Top Score</div>
+      </div>
+    </div>
+
+    <div class="dashboard-section">
+      <h3><span class="icon">📊</span> Performance Overview</h3>
+      
+      <!-- Filter Info Message -->
+      <div class="filter-info" id="filterInfo">
+        <span class="filter-info-icon">ℹ️</span>
+        <span>No test scores available. Add scores using the form below.</span>
+      </div>
+
+      <!-- Active Filters Display -->
+      <div class="active-filters" id="activeFilters" style="display: none;"></div>
+      
+      <!-- Add Score Form -->
+      <div class="add-score-form">
+        <h4><span class="icon">➕</span> Add New Score</h4>
+        <form id="addScoreForm">
+          <div class="form-row">
+            <div class="form-group">
+              <label for="studentSelect">Student</label>
+              <select id="studentSelect" class="form-control" required>
+                <option value="">Select a student</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="testName">Test Name</label>
+              <input type="text" id="testName" class="form-control" placeholder="Enter test name" required>
+            </div>
+            <div class="form-group">
+              <label for="scoreValue">Score</label>
+              <input type="text" id="scoreValue" class="form-control" placeholder="e.g., 42/50" required>
+            </div>
+            <div class="form-group">
+              <label for="testDate">Date</label>
+              <input type="date" id="testDate" class="form-control" required>
+            </div>
+          </div>
+          <div class="error-message" id="formError"></div>
+          <button type="submit" class="btn btn-success">
+            <span>Add Score</span>
+          </button>
+        </form>
+      </div>
+      
+      <div class="form-row">
+        <div class="form-group">
+          <label for="filterClass">Filter by Class</label>
+          <select id="filterClass" class="form-control">
+            <option value="all">All Classes</option>
+            <option value="11th-mhtcet-pcm">11th MHTCET (PCM)</option>
+            <option value="11th-mhtcet-pcb">11th MHTCET (PCB)</option>
+            <option value="11th-jee">11th JEE</option>
+            <option value="11th-neet">11th NEET</option>
+            <option value="12th-mhtcet-pcm">12th MHTCET (PCM)</option>
+            <option value="12th-mhtcet-pcb">12th MHTCET (PCB)</option>
+            <option value="12th-jee">12th JEE</option>
+            <option value="12th-neet">12th NEET</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="filterTest">Filter by Test</label>
+          <select id="filterTest" class="form-control">
+            <option value="all">All Tests</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="filterDate">Filter by Date</label>
+          <input type="month" id="filterDate" class="form-control">
+        </div>
+        <div class="form-group" style="display: flex; align-items: flex-end;">
+          <button class="btn" onclick="clearFilters()" style="width: 100%;">
+            <span>Clear Filters</span>
+          </button>
+        </div>
+      </div>
+      
+      <div class="data-table-container">
+        <table class="data-table" id="scoresTable">
+          <thead>
+            <tr>
+              <th>Student Name</th>
+              <th>Class</th>
+              <th>Test</th>
+              <th>Score</th>
+              <th>Percentage</th>
+              <th>Date</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="scoresTableBody">
+            <!-- Data will be populated by JavaScript -->
+          </tbody>
+        </table>
+      </div>
+      
+      <div class="empty-state" id="emptyState" style="display: none;">
+        <div class="empty-icon">📊</div>
+        <h3>No scores found</h3>
+        <p>Add test scores using the form above or adjust your filters</p>
+      </div>
+    </div>
+  </main>
+
+  <footer>
+    <p>&copy; 2023 Soham - Entrance Exam Practice. All rights reserved.</p>
+  </footer>
+
+  <script>
+    // Check if user is logged in and is a teacher
+    if (localStorage.getItem("isLoggedIn") !== "true" || localStorage.getItem("userRole") !== "teacher") {
+      window.location.href = "select-role.html";
+    }
+
+    // Logout function
+    function logout() {
+      // Show loading state
+      const logoutBtn = event.target;
+      const originalText = logoutBtn.innerHTML;
+      logoutBtn.innerHTML = '<span class="loading"></span> Logging out...';
+      logoutBtn.disabled = true;
+      
+      setTimeout(() => {
+        localStorage.removeItem("isLoggedIn");
+        localStorage.removeItem("userRole");
+        window.location.href = "login.html";
+      }, 1000);
+    }
+
+    // Hamburger menu functionality
+    const hamburger = document.getElementById('hamburger');
+    const sideNav = document.getElementById('sideNav');
+    const overlay = document.getElementById('overlay');
+
+    hamburger.addEventListener('click', () => {
+      sideNav.classList.toggle('active');
+      overlay.classList.toggle('active');
+      document.body.style.overflow = sideNav.classList.contains('active') ? 'hidden' : 'auto';
+    });
+
+    overlay.addEventListener('click', () => {
+      sideNav.classList.remove('active');
+      overlay.classList.remove('active');
+      document.body.style.overflow = 'auto';
+    });
+
+    // Close menu when clicking on a link
+    const navLinks = document.querySelectorAll('.side-nav a');
+    navLinks.forEach(link => {
+      link.addEventListener('click', () => {
+        sideNav.classList.remove('active');
+        overlay.classList.remove('active');
+        document.body.style.overflow = 'auto';
+      });
+    });
+
+    // Show success message
+    function showSuccessMessage(message, icon = '✅') {
+      const successMessage = document.getElementById('successMessage');
+      const successText = document.getElementById('successText');
+      
+      successMessage.innerHTML = `<span class="success-icon">${icon}</span><span>${message}</span>`;
+      successMessage.classList.add('show');
+      
+      setTimeout(() => {
+        successMessage.classList.remove('show');
+        // Reset to default message
+        successMessage.innerHTML = '<span class="success-icon">✅</span><span id="successText">Filters applied successfully!</span>';
+      }, 3000);
+    }
+
+    // Show error message
+    function showErrorMessage(message) {
+      const errorMessage = document.getElementById('formError');
+      errorMessage.textContent = message;
+      errorMessage.classList.add('show');
+      
+      setTimeout(() => {
+        errorMessage.classList.remove('show');
+      }, 5000);
+    }
+
+    // Initialize the page with data
+    document.addEventListener('DOMContentLoaded', function() {
+      // Set today's date as default for new scores
+      document.getElementById('testDate').valueAsDate = new Date();
+      
+      // Load students and populate dropdown
+      loadStudents();
+      
+      // Load test scores and display ALL results by default
+      loadTestScores();
+      
+      // Set up filter event listeners
+      document.getElementById('filterClass').addEventListener('change', applyFilters);
+      document.getElementById('filterTest').addEventListener('change', applyFilters);
+      document.getElementById('filterDate').addEventListener('change', applyFilters);
+      
+      // Set up form submission
+      document.getElementById('addScoreForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        addNewScore();
+      });
+    });
+
+    // Load students from localStorage
+    function loadStudents() {
+      const studentSelect = document.getElementById('studentSelect');
+      const students = JSON.parse(localStorage.getItem('students')) || [];
+      
+      // Clear existing options except the first one
+      while (studentSelect.options.length > 1) {
+        studentSelect.remove(1);
+      }
+      
+      // Add student options
+      students.forEach(student => {
+        const option = document.createElement('option');
+        option.value = student.studentId;
+        option.textContent = `${student.studentName} (${student.studentClass})`;
+        studentSelect.appendChild(option);
+      });
+      
+      // Show message if no students available
+      if (students.length === 0) {
+        studentSelect.innerHTML = '<option value="">No students available. Add students first.</option>';
+      }
+    }
+
+    // Load test scores from localStorage and display ALL results
+    function loadTestScores() {
+      const testScores = JSON.parse(localStorage.getItem('testScores')) || [];
+      updateTestFilter(testScores);
+      
+      // Display ALL results by default
+      displayTestData(testScores);
+      updateStatistics(testScores);
+      updateActiveFilters();
+      
+      // Update filter info message
+      if (testScores.length === 0) {
+        document.getElementById('filterInfo').innerHTML = `
+          <span class="filter-info-icon">ℹ️</span>
+          <span>No test scores available. Add scores using the form above.</span>
+        `;
+      } else {
+        document.getElementById('filterInfo').innerHTML = `
+          <span class="filter-info-icon">ℹ️</span>
+          <span>Showing all ${testScores.length} results. Apply filters to narrow down your search.</span>
+        `;
+      }
+    }
+
+    // Update test filter dropdown with unique test names
+    function updateTestFilter(testScores) {
+      const testFilter = document.getElementById('filterTest');
+      const testNames = [...new Set(testScores.map(score => score.testName))];
+      
+      // Clear existing options except the first one
+      while (testFilter.options.length > 1) {
+        testFilter.remove(1);
+      }
+      
+      // Add test name options
+      testNames.forEach(testName => {
+        const option = document.createElement('option');
+        option.value = testName;
+        option.textContent = testName;
+        testFilter.appendChild(option);
+      });
+    }
+
+    // Apply filters to the data
+    function applyFilters() {
+      const classFilter = document.getElementById('filterClass').value;
+      const testFilter = document.getElementById('filterTest').value;
+      const dateFilter = document.getElementById('filterDate').value;
+      
+      // Check if any filter is applied (not set to default "all" or empty)
+      const isFilterApplied = classFilter !== 'all' || testFilter !== 'all' || dateFilter !== '';
+      
+      const testScores = JSON.parse(localStorage.getItem('testScores')) || [];
+      
+      let filteredData;
+      
+      if (!isFilterApplied) {
+        // No filters applied - show ALL results
+        filteredData = testScores;
+        
+        // Update filter info message
+        if (filteredData.length === 0) {
+          document.getElementById('filterInfo').innerHTML = `
+            <span class="filter-info-icon">ℹ️</span>
+            <span>No test scores available. Add scores using the form above.</span>
+          `;
+        } else {
+          document.getElementById('filterInfo').innerHTML = `
+            <span class="filter-info-icon">ℹ️</span>
+            <span>Showing all ${filteredData.length} results. Apply filters to narrow down your search.</span>
+          `;
+        }
+      } else {
+        // Filters applied - apply filtering logic
+        filteredData = testScores.filter(item => {
+          let match = true;
+          
+          // Class filter
+          if (classFilter !== 'all' && item.class !== classFilter) {
+            match = false;
+          }
+          
+          // Test filter
+          if (testFilter !== 'all' && item.testName !== testFilter) {
+            match = false;
+          }
+          
+          // Date filter
+          if (dateFilter) {
+            const itemDate = new Date(item.date);
+            const filterDate = new Date(dateFilter);
+            if (itemDate.getMonth() !== filterDate.getMonth() || 
+                itemDate.getFullYear() !== filterDate.getFullYear()) {
+              match = false;
+            }
+          }
+          
+          return match;
+        });
+        
+        // Update filter info message
+        document.getElementById('filterInfo').innerHTML = `
+          <span class="filter-info-icon">🔍</span>
+          <span>Showing ${filteredData.length} filtered results</span>
+        `;
+        
+        // Show success message for filtered results
+        showSuccessMessage(`Showing ${filteredData.length} filtered results`);
+      }
+      
+      // Display the data (either all or filtered)
+      displayTestData(filteredData);
+      updateStatistics(filteredData);
+      updateActiveFilters();
+    }
+
+    // Update active filters display
+    function updateActiveFilters() {
+      const activeFiltersContainer = document.getElementById('activeFilters');
+      const classFilter = document.getElementById('filterClass').value;
+      const testFilter = document.getElementById('filterTest').value;
+      const dateFilter = document.getElementById('filterDate').value;
+      
+      // Check if any filter is applied
+      const isFilterApplied = classFilter !== 'all' || testFilter !== 'all' || dateFilter !== '';
+      
+      if (!isFilterApplied) {
+        activeFiltersContainer.style.display = 'none';
+        return;
+      }
+      
+      // Show active filters container
+      activeFiltersContainer.style.display = 'flex';
+      activeFiltersContainer.innerHTML = '';
+      
+      // Add active filter tags
+      if (classFilter !== 'all') {
+        const classTag = document.createElement('div');
+        classTag.className = 'filter-tag';
+        classTag.innerHTML = `Class: ${classFilter} <span class="remove" onclick="removeFilter('class')">×</span>`;
+        activeFiltersContainer.appendChild(classTag);
+      }
+      
+      if (testFilter !== 'all') {
+        const testTag = document.createElement('div');
+        testTag.className = 'filter-tag';
+        testTag.innerHTML = `Test: ${testFilter} <span class="remove" onclick="removeFilter('test')">×</span>`;
+        activeFiltersContainer.appendChild(testTag);
+      }
+      
+      if (dateFilter) {
+        const dateTag = document.createElement('div');
+        dateTag.className = 'filter-tag';
+        const formattedDate = new Date(dateFilter).toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
+        dateTag.innerHTML = `Date: ${formattedDate} <span class="remove" onclick="removeFilter('date')">×</span>`;
+        activeFiltersContainer.appendChild(dateTag);
+      }
+    }
+
+    // Remove specific filter
+    function removeFilter(type) {
+      if (type === 'class') {
+        document.getElementById('filterClass').value = 'all';
+      } else if (type === 'test') {
+        document.getElementById('filterTest').value = 'all';
+      } else if (type === 'date') {
+        document.getElementById('filterDate').value = '';
+      }
+      
+      // Re-apply filters
+      applyFilters();
+    }
+
+    // Clear all filters
+    function clearFilters() {
+      document.getElementById('filterClass').value = 'all';
+      document.getElementById('filterTest').value = 'all';
+      document.getElementById('filterDate').value = '';
+      
+      // Reload all data (show all results)
+      loadTestScores();
+      showSuccessMessage('Showing all results');
+    }
+
+    // Display test data in the table
+    function displayTestData(data) {
+      const tableBody = document.getElementById('scoresTableBody');
+      const emptyState = document.getElementById('emptyState');
+      
+      // Clear existing table rows
+      tableBody.innerHTML = '';
+      
+      if (data.length === 0) {
+        // Show empty state
+        tableBody.style.display = 'none';
+        emptyState.style.display = 'block';
+        return;
+      }
+      
+      // Show table and hide empty state
+      tableBody.style.display = 'table-row-group';
+      emptyState.style.display = 'none';
+      
+      // Add rows for each test result
+      data.forEach(item => {
+        const row = document.createElement('tr');
+        
+        // Determine score class for styling
+        let scoreClass = 'score-medium';
+        if (item.percentage >= 85) scoreClass = 'score-high';
+        else if (item.percentage < 70) scoreClass = 'score-low';
+        
+        row.innerHTML = `
+          <td>${item.studentName}</td>
+          <td>${item.class}</td>
+          <td>${item.testName}</td>
+          <td>${item.score}</td>
+          <td class="${scoreClass}">${item.percentage}%</td>
+          <td>${formatDate(item.date)}</td>
+          <td>
+            <button class="btn btn-small btn-outline" onclick="viewScoreDetails('${item.id}')">View Details</button>
+          </td>
+        `;
+        
+        tableBody.appendChild(row);
+      });
+    }
+
+    // Update statistics cards
+    function updateStatistics(data) {
+      const totalTests = data.length;
+      const totalStudents = new Set(data.map(item => item.studentId)).size;
+      
+      // Calculate average score
+      const totalPercentage = data.reduce((sum, item) => sum + item.percentage, 0);
+      const avgScore = totalTests > 0 ? Math.round(totalPercentage / totalTests) : 0;
+      
+      // Find top score
+      const topScore = totalTests > 0 ? Math.max(...data.map(item => item.percentage)) : 0;
+      
+      // Update DOM elements
+      document.getElementById('totalTests').textContent = totalTests;
+      document.getElementById('totalStudents').textContent = totalStudents;
+      document.getElementById('avgScore').textContent = `${avgScore}%`;
+      document.getElementById('topScore').textContent = `${topScore}%`;
+    }
+
+    // Format date for display
+    function formatDate(dateString) {
+      const options = { day: 'numeric', month: 'short', year: 'numeric' };
+      return new Date(dateString).toLocaleDateString('en-US', options);
+    }
+
+    // Add a new score
+    function addNewScore() {
+      const studentSelect = document.getElementById('studentSelect');
+      const testName = document.getElementById('testName').value;
+      const scoreValue = document.getElementById('scoreValue').value;
+      const testDate = document.getElementById('testDate').value;
+      
+      // Validation
+      if (!studentSelect.value || !testName || !scoreValue || !testDate) {
+        showErrorMessage('Please fill in all fields');
+        return;
+      }
+      
+      // Parse score to calculate percentage
+      const scoreParts = scoreValue.split('/');
+      if (scoreParts.length !== 2) {
+        showErrorMessage('Please enter score in format: obtained/total (e.g., 42/50)');
+        return;
+      }
+      
+      const obtained = parseInt(scoreParts[0]);
+      const total = parseInt(scoreParts[1]);
+      
+      if (isNaN(obtained) || isNaN(total) || total === 0) {
+        showErrorMessage('Please enter valid score values');
+        return;
+      }
+      
+      const percentage = Math.round((obtained / total) * 100);
+      
+      // Get student details
+      const students = JSON.parse(localStorage.getItem('students')) || [];
+      const student = students.find(s => s.studentId === studentSelect.value);
+      
+      if (!student) {
+        showErrorMessage('Selected student not found');
+        return;
+      }
+      
+      // Create score object
+      const testScores = JSON.parse(localStorage.getItem('testScores')) || [];
+      const newId = 'score_' + Date.now();
+      
+      const newScore = {
+        id: newId,
+        studentId: student.studentId,
+        studentName: student.studentName,
+        class: student.studentClass,
+        testName: testName,
+        score: scoreValue,
+        obtained: obtained,
+        total: total,
+        percentage: percentage,
+        date: testDate,
+        timestamp: new Date().getTime()
+      };
+      
+      // Add to scores and save
+      testScores.push(newScore);
+      localStorage.setItem('testScores', JSON.stringify(testScores));
+      
+      // Reset form
+      document.getElementById('testName').value = '';
+      document.getElementById('scoreValue').value = '';
+      document.getElementById('testDate').valueAsDate = new Date();
+      
+      // Update test filter dropdown
+      updateTestFilter(testScores);
+      
+      // Show success message
+      showSuccessMessage('Score added successfully!');
+      
+      // Refresh the display based on current filter state
+      applyFilters();
+    }
+
+    // View score details
+    function viewScoreDetails(scoreId) {
+      const testScores = JSON.parse(localStorage.getItem('testScores')) || [];
+      const score = testScores.find(item => item.id === scoreId);
+      
+      if (score) {
+        alert(`Score Details:\n\nStudent: ${score.studentName}\nClass: ${score.class}\nTest: ${score.testName}\nScore: ${score.score}\nPercentage: ${score.percentage}%\nDate: ${formatDate(score.date)}`);
+      }
+    }
+  </script>
+</body>
+</html>
