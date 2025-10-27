@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Institute Code - Soham</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #e0f2fe, #f0f9ff);
+      color: #333;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    header {
+      background: #2563eb;
+      color: white;
+      padding: 15px 40px;
+      text-align: center;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    }
+
+    header h1 {
+      font-size: 1.8rem;
+      font-weight: bold;
+    }
+
+    .institute-container {
+      max-width: 400px;
+      margin: 80px auto;
+      background: white;
+      padding: 40px 30px;
+      border-radius: 18px;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+      text-align: center;
+      flex-grow: 1;
+    }
+
+    .institute-container h2 {
+      color: #2563eb;
+      margin-bottom: 25px;
+      font-size: 1.6rem;
+    }
+
+    .institute-container input {
+      width: 100%;
+      padding: 12px;
+      margin: 10px 0;
+      border-radius: 8px;
+      border: 1px solid #d1d5db;
+      font-size: 1rem;
+      outline: none;
+    }
+
+    .institute-container input:focus {
+      border: 1px solid #2563eb;
+      box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.2);
+    }
+
+    .continue-btn {
+      width: 100%;
+      padding: 12px;
+      background: #2563eb;
+      color: white;
+      border: none;
+      border-radius: 25px;
+      font-size: 1rem;
+      font-weight: 500;
+      cursor: pointer;
+      margin-top: 15px;
+      transition: background 0.3s;
+    }
+
+    .continue-btn:hover {
+      background: #1d4ed8;
+    }
+
+    .error {
+      color: #dc2626;
+      margin-top: 10px;
+      font-size: 0.9rem;
+      text-align: center;
+      padding: 8px;
+      background-color: #fef2f2;
+      border-radius: 6px;
+      border: 1px solid #fecaca;
+    }
+
+    footer {
+      padding: 20px;
+      text-align: center;
+      background: #2563eb;
+      color: white;
+      font-size: 0.9rem;
+      margin-top: auto;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Soham</h1>
+  </header>
+
+  <div class="institute-container">
+    <h2>Enter Institute Code</h2>
+    <form id="instituteForm">
+      <input type="text" id="instituteCode" placeholder="Institute Code" required />
+      <button type="submit" class="continue-btn">Continue</button>
+      <p id="errorMsg" class="error"></p>
+    </form>
+  </div>
+
+  <footer>
+    <p>&copy; 2025 Soham. All rights reserved.</p>
+  </footer>
+
+  <script>
+    const form = document.getElementById("instituteForm");
+    const errorMsg = document.getElementById("errorMsg");
+
+    form.addEventListener("submit", function(e) {
+      e.preventDefault();
+      errorMsg.textContent = "";
+      
+      const instituteCode = document.getElementById("instituteCode").value.trim();
+
+      // Validate input
+      if (!instituteCode) {
+        errorMsg.textContent = "Please enter institute code!";
+        return;
+      }
+
+      // Store institute info and redirect to role-selection.html
+      localStorage.setItem("instituteCode", instituteCode);
+      localStorage.setItem("isLoggedIn", "true");
+      window.location.href = "role-selection.html";
+    });
+  </script>
+</body>
+</html>
