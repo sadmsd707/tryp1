@@ -1,0 +1,870 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Add Student - Soham Teacher Dashboard</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    body {
+      background: #f5f7fa;
+      color: #333;
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+
+    header {
+      background: #2563eb;
+      color: white;
+      padding: 15px 30px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+      position: relative;
+      z-index: 100;
+    }
+
+    header h1 {
+      font-size: 1.8rem;
+      font-weight: 700;
+    }
+
+    /* Hamburger Menu Styles */
+    .hamburger {
+      background: none;
+      border: none;
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      width: 30px;
+      height: 21px;
+      padding: 0;
+    }
+
+    .hamburger span {
+      display: block;
+      height: 3px;
+      width: 100%;
+      background-color: white;
+      border-radius: 3px;
+      transition: all 0.3s ease;
+    }
+
+    /* Side Navigation Panel */
+    .side-nav {
+      position: fixed;
+      top: 0;
+      right: -300px;
+      width: 300px;
+      height: 100vh;
+      background: linear-gradient(to bottom, #2563eb, #1e3a8a);
+      box-shadow: -5px 0 15px rgba(0, 0, 0, 0.1);
+      transition: right 0.4s ease;
+      z-index: 1000;
+      padding-top: 70px;
+    }
+
+    .side-nav.active {
+      right: 0;
+    }
+
+    .side-nav ul {
+      list-style: none;
+      padding: 0;
+    }
+
+    .side-nav ul li {
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .side-nav ul li a {
+      display: block;
+      color: white;
+      text-decoration: none;
+      padding: 15px 30px;
+      font-size: 1.1rem;
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .side-nav ul li a:hover {
+      background-color: rgba(255, 255, 255, 0.1);
+      padding-left: 40px;
+    }
+
+    .nav-icon {
+      font-size: 1.2rem;
+      width: 20px;
+      text-align: center;
+    }
+
+    .overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.5);
+      z-index: 999;
+      opacity: 0;
+      visibility: hidden;
+      transition: all 0.3s ease;
+    }
+
+    .overlay.active {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    /* Dashboard Styles */
+    .dashboard {
+      padding: 30px 20px;
+      max-width: 1200px;
+      margin: auto;
+    }
+
+    .welcome-section {
+      background: linear-gradient(to right, #2563eb, #1e3a8a);
+      color: white;
+      padding: 30px;
+      border-radius: 15px;
+      margin-bottom: 30px;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .welcome-section::before {
+      content: "";
+      position: absolute;
+      top: -50%;
+      right: -50%;
+      width: 100%;
+      height: 200%;
+      background: rgba(255, 255, 255, 0.1);
+      transform: rotate(30deg);
+    }
+
+    .welcome-section h2 {
+      font-size: 2.2rem;
+      margin-bottom: 10px;
+      position: relative;
+    }
+
+    .welcome-section p {
+      font-size: 1.2rem;
+      opacity: 0.9;
+      position: relative;
+    }
+
+    /* Form Container */
+    .form-container {
+      background: white;
+      border-radius: 15px;
+      padding: 40px;
+      margin-bottom: 30px;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+      position: relative;
+    }
+
+    .form-header {
+      display: flex;
+      align-items: center;
+      margin-bottom: 30px;
+      padding-bottom: 20px;
+      border-bottom: 1px solid #e2e8f0;
+    }
+
+    .form-icon {
+      background: #2563eb;
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-right: 20px;
+      font-size: 1.8rem;
+      color: white;
+    }
+
+    .form-title {
+      color: #1e3a8a;
+      font-size: 1.8rem;
+      font-weight: 700;
+    }
+
+    .form-subtitle {
+      color: #64748b;
+      font-size: 1rem;
+      margin-top: 5px;
+    }
+
+    /* Form Styles */
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 25px;
+    }
+
+    .form-group {
+      margin-bottom: 0;
+    }
+
+    .form-group.full-width {
+      grid-column: 1 / -1;
+    }
+
+    .form-group label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 600;
+      color: #1e3a8a;
+      font-size: 1rem;
+    }
+
+    .form-control {
+      width: 100%;
+      padding: 14px 16px;
+      border: 1px solid #d1d5db;
+      border-radius: 10px;
+      font-size: 1rem;
+      transition: all 0.3s ease;
+      background: #f8fafc;
+    }
+
+    .form-control:focus {
+      outline: none;
+      border-color: #2563eb;
+      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+      background: white;
+    }
+
+    .form-control::placeholder {
+      color: #94a3b8;
+    }
+
+    select.form-control {
+      appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%231e3a8a' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 16px center;
+      padding-right: 45px;
+    }
+
+    .form-actions {
+      display: flex;
+      gap: 15px;
+      margin-top: 30px;
+      padding-top: 20px;
+      border-top: 1px solid #e2e8f0;
+    }
+
+    .btn {
+      background: #2563eb;
+      color: white;
+      border: none;
+      padding: 14px 28px;
+      border-radius: 10px;
+      cursor: pointer;
+      font-weight: 600;
+      transition: all 0.3s ease;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      font-size: 1rem;
+    }
+
+    .btn:hover {
+      background: #1e3a8a;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2);
+    }
+
+    .btn-success {
+      background: #10b981;
+    }
+
+    .btn-success:hover {
+      background: #059669;
+      box-shadow: 0 4px 12px rgba(16, 185, 129, 0.2);
+    }
+
+    .btn-secondary {
+      background: #f1f5f9;
+      color: #475569;
+    }
+
+    .btn-secondary:hover {
+      background: #e2e8f0;
+      color: #334155;
+      box-shadow: 0 4px 12px rgba(148, 163, 184, 0.2);
+    }
+
+    /* Quick Add Section */
+    .quick-add-section {
+      background: white;
+      border-radius: 15px;
+      padding: 30px;
+      margin-top: 30px;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+    }
+
+    .quick-add-section h3 {
+      color: #1e3a8a;
+      margin-bottom: 20px;
+      font-size: 1.5rem;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .quick-actions {
+      display: flex;
+      gap: 15px;
+      flex-wrap: wrap;
+    }
+
+    .quick-action-btn {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      background: #f8fafc;
+      border: 1px dashed #cbd5e1;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      min-width: 150px;
+      text-align: center;
+    }
+
+    .quick-action-btn:hover {
+      background: #f1f5f9;
+      border-color: #94a3b8;
+      transform: translateY(-2px);
+    }
+
+    .quick-action-icon {
+      font-size: 2rem;
+      margin-bottom: 10px;
+      color: #2563eb;
+    }
+
+    .quick-action-text {
+      font-weight: 600;
+      color: #475569;
+      font-size: 0.9rem;
+    }
+
+    footer {
+      background: #1e3a8a;
+      color: white;
+      text-align: center;
+      padding: 30px;
+      margin-top: 50px;
+    }
+
+    footer p {
+      font-size: 1rem;
+    }
+
+    /* Responsive styles */
+    @media (max-width: 768px) {
+      header {
+        padding: 15px 20px;
+      }
+      
+      .welcome-section h2 {
+        font-size: 1.8rem;
+      }
+      
+      .welcome-section p {
+        font-size: 1rem;
+      }
+      
+      .form-grid {
+        grid-template-columns: 1fr;
+      }
+      
+      .form-header {
+        flex-direction: column;
+        text-align: center;
+      }
+      
+      .form-icon {
+        margin-right: 0;
+        margin-bottom: 15px;
+      }
+      
+      .form-actions {
+        flex-direction: column;
+      }
+      
+      .quick-actions {
+        justify-content: center;
+      }
+    }
+
+    /* Loading animation */
+    .loading {
+      display: inline-block;
+      width: 20px;
+      height: 20px;
+      border: 3px solid rgba(255,255,255,.3);
+      border-radius: 50%;
+      border-top-color: #fff;
+      animation: spin 1s ease-in-out infinite;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    /* Success Message */
+    .success-message {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      background: #10b981;
+      color: white;
+      padding: 15px 25px;
+      border-radius: 10px;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      z-index: 1000;
+      transform: translateX(150%);
+      transition: transform 0.3s ease;
+    }
+
+    .success-message.show {
+      transform: translateX(0);
+    }
+
+    .success-icon {
+      font-size: 1.5rem;
+    }
+
+    /* Field Info */
+    .field-info {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-top: 5px;
+      font-size: 0.85rem;
+      color: #64748b;
+    }
+
+    .info-icon {
+      color: #2563eb;
+    }
+
+    /* Auto-save indicator */
+    .auto-save-indicator {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background: #f59e0b;
+      color: white;
+      padding: 10px 15px;
+      border-radius: 8px;
+      font-size: 0.9rem;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      z-index: 1000;
+      transform: translateY(150%);
+      transition: transform 0.3s ease;
+    }
+
+    .auto-save-indicator.show {
+      transform: translateY(0);
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Soham - Teacher Dashboard</h1>
+    <button class="hamburger" id="hamburger">
+      <span></span>
+      <span></span>
+      <span></span>
+    </button>
+  </header>
+
+  <!-- Side Navigation -->
+  <div class="side-nav" id="sideNav">
+    <ul>
+      <li><a href="teacher-dashboard.html"><span class="nav-icon">📊</span>Dashboard</a></li>
+      <li><a href="teacher-classes.html"><span class="nav-icon">🏫</span>My Classes</a></li>
+      <li><a href="add-student.html"><span class="nav-icon">👨‍🎓</span>Add Student</a></li>
+      <li><a href="create-test.html"><span class="nav-icon">✏️</span>Create Test</a></li>
+      <li><a href="teacher-scores.html"><span class="nav-icon">📝</span>Student Scores</a></li>
+      <li><a href="teacher-resources.html"><span class="nav-icon">📚</span>Resources</a></li>
+      <li><a href="my-account.html"><span class="nav-icon">👤</span>My Account</a></li>
+      <li><a href="#" onclick="logout()"><span class="nav-icon">🚪</span>Logout</a></li>
+    </ul>
+  </div>
+
+  <!-- Overlay for closing the menu when clicking outside -->
+  <div class="overlay" id="overlay"></div>
+
+  <!-- Success Message -->
+  <div class="success-message" id="successMessage">
+    <span class="success-icon">✅</span>
+    <span id="successText">Student added successfully!</span>
+  </div>
+
+  <!-- Auto-save Indicator -->
+  <div class="auto-save-indicator" id="autoSaveIndicator">
+    <span class="success-icon">💾</span>
+    <span>Data saved automatically</span>
+  </div>
+
+  <main class="dashboard">
+    <section class="welcome-section">
+      <h2>Add New Student</h2>
+      <p>Register a new student to your classes</p>
+    </section>
+
+    <div class="form-container">
+      <div class="form-header">
+        <div class="form-icon">👨‍🎓</div>
+        <div>
+          <div class="form-title">Student Registration</div>
+          <div class="form-subtitle">Fill in the student details to add them to your class</div>
+        </div>
+      </div>
+
+      <form id="addStudentForm">
+        <div class="form-grid">
+          <div class="form-group">
+            <label for="studentName">Full Name</label>
+            <input type="text" id="studentName" class="form-control" placeholder="Enter student's full name" required>
+            <div class="field-info">
+              <span class="info-icon">ℹ️</span>
+              <span>Enter the student's complete name as per official records</span>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="studentId">Student ID</label>
+            <input type="text" id="studentId" class="form-control" placeholder="Enter student ID" required>
+            <div class="field-info">
+              <span class="info-icon">ℹ️</span>
+              <span>Unique identifier for the student</span>
+            </div>
+          </div>
+          
+          <div class="form-group full-width">
+            <label for="studentClass">Select Class</label>
+            <select id="studentClass" class="form-control" required>
+              <option value="">Choose a class</option>
+              <option value="11th-mhtcet-pcm">11th MHTCET (PCM)</option>
+              <option value="11th-mhtcet-pcb">11th MHTCET (PCB)</option>
+              <option value="11th-jee">11th JEE</option>
+              <option value="11th-neet">11th NEET</option>
+              <option value="12th-mhtcet-pcm">12th MHTCET (PCM)</option>
+              <option value="12th-mhtcet-pcb">12th MHTCET (PCB)</option>
+              <option value="12th-jee">12th JEE</option>
+              <option value="12th-neet">12th NEET</option>
+            </select>
+            <div class="field-info">
+              <span class="info-icon">ℹ️</span>
+              <span>Select the appropriate class for the student</span>
+            </div>
+          </div>
+          
+          <div class="form-group">
+            <label for="studentMobile">Student Mobile No.</label>
+            <input type="tel" id="studentMobile" class="form-control" placeholder="+91 98765 43210" required>
+            <div class="field-info">
+              <span class="info-icon">ℹ️</span>
+              <span>Student's personal contact number</span>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="parentMobile">Parent Mobile No.</label>
+            <input type="tel" id="parentMobile" class="form-control" placeholder="+91 98765 43210" required>
+            <div class="field-info">
+              <span class="info-icon">ℹ️</span>
+              <span>Parent or guardian's contact number</span>
+            </div>
+          </div>
+        </div>
+        
+        <div class="form-actions">
+          <button type="submit" class="btn btn-success">
+            <span>Add Student</span>
+          </button>
+          <button type="button" class="btn btn-secondary" onclick="clearForm()">
+            <span>Clear Form</span>
+          </button>
+        </div>
+      </form>
+    </div>
+
+    <div class="quick-add-section">
+      <h3><span class="icon">⚡</span> Quick Actions</h3>
+      <div class="quick-actions">
+        <div class="quick-action-btn" onclick="generateStudentId()">
+          <div class="quick-action-icon">🆔</div>
+          <div class="quick-action-text">Generate ID</div>
+        </div>
+        <div class="quick-action-btn" onclick="clearForm()">
+          <div class="quick-action-icon">🗑️</div>
+          <div class="quick-action-text">Clear Form</div>
+        </div>
+        <div class="quick-action-btn" onclick="viewAllStudents()">
+          <div class="quick-action-icon">👥</div>
+          <div class="quick-action-text">View All Students</div>
+        </div>
+        <div class="quick-action-btn" onclick="loadSavedData()">
+          <div class="quick-action-icon">📥</div>
+          <div class="quick-action-text">Load Saved Data</div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <footer>
+    <p>&copy; 2023 Soham - Entrance Exam Practice. All rights reserved.</p>
+  </footer>
+
+  <script>
+    // Check if user is logged in and is a teacher
+    if (localStorage.getItem("isLoggedIn") !== "true" || localStorage.getItem("userRole") !== "teacher") {
+      window.location.href = "select-role.html";
+    }
+
+    // Logout function
+    function logout() {
+      // Show loading state
+      const logoutBtn = event.target;
+      const originalText = logoutBtn.innerHTML;
+      logoutBtn.innerHTML = '<span class="loading"></span> Logging out...';
+      logoutBtn.disabled = true;
+      
+      setTimeout(() => {
+        localStorage.removeItem("isLoggedIn");
+        localStorage.removeItem("userRole");
+        window.location.href = "login.html";
+      }, 1000);
+    }
+
+    // Hamburger menu functionality
+    const hamburger = document.getElementById('hamburger');
+    const sideNav = document.getElementById('sideNav');
+    const overlay = document.getElementById('overlay');
+
+    hamburger.addEventListener('click', () => {
+      sideNav.classList.toggle('active');
+      overlay.classList.toggle('active');
+      document.body.style.overflow = sideNav.classList.contains('active') ? 'hidden' : 'auto';
+    });
+
+    overlay.addEventListener('click', () => {
+      sideNav.classList.remove('active');
+      overlay.classList.remove('active');
+      document.body.style.overflow = 'auto';
+    });
+
+    // Close menu when clicking on a link
+    const navLinks = document.querySelectorAll('.side-nav a');
+    navLinks.forEach(link => {
+      link.addEventListener('click', () => {
+        sideNav.classList.remove('active');
+        overlay.classList.remove('active');
+        document.body.style.overflow = 'auto';
+      });
+    });
+
+    // Auto-save functionality
+    const form = document.getElementById('addStudentForm');
+    const formFields = form.querySelectorAll('input, select');
+    
+    // Load saved data on page load
+    window.addEventListener('DOMContentLoaded', () => {
+      loadSavedData();
+    });
+
+    // Auto-save when form fields change
+    formFields.forEach(field => {
+      field.addEventListener('input', () => {
+        saveFormData();
+        showAutoSaveIndicator();
+      });
+      
+      field.addEventListener('change', () => {
+        saveFormData();
+        showAutoSaveIndicator();
+      });
+    });
+
+    // Save form data to localStorage
+    function saveFormData() {
+      const formData = {
+        studentName: document.getElementById('studentName').value,
+        studentId: document.getElementById('studentId').value,
+        studentClass: document.getElementById('studentClass').value,
+        studentMobile: document.getElementById('studentMobile').value,
+        parentMobile: document.getElementById('parentMobile').value
+      };
+      
+      localStorage.setItem('studentFormData', JSON.stringify(formData));
+    }
+
+    // Load saved form data from localStorage
+    function loadSavedData() {
+      const savedData = localStorage.getItem('studentFormData');
+      if (savedData) {
+        const formData = JSON.parse(savedData);
+        document.getElementById('studentName').value = formData.studentName || '';
+        document.getElementById('studentId').value = formData.studentId || '';
+        document.getElementById('studentClass').value = formData.studentClass || '';
+        document.getElementById('studentMobile').value = formData.studentMobile || '';
+        document.getElementById('parentMobile').value = formData.parentMobile || '';
+      }
+    }
+
+    // Clear form function
+    function clearForm() {
+      document.getElementById('addStudentForm').reset();
+      localStorage.removeItem('studentFormData');
+      showSuccessMessage('Form cleared successfully!', '🗑️');
+    }
+
+    // Show auto-save indicator
+    function showAutoSaveIndicator() {
+      const indicator = document.getElementById('autoSaveIndicator');
+      indicator.classList.add('show');
+      
+      setTimeout(() => {
+        indicator.classList.remove('show');
+      }, 2000);
+    }
+
+    // Show success message
+    function showSuccessMessage(message, icon = '✅') {
+      const successMessage = document.getElementById('successMessage');
+      const successText = document.getElementById('successText');
+      
+      successMessage.innerHTML = `<span class="success-icon">${icon}</span><span>${message}</span>`;
+      successMessage.classList.add('show');
+      
+      setTimeout(() => {
+        successMessage.classList.remove('show');
+        // Reset to default message
+        successMessage.innerHTML = '<span class="success-icon">✅</span><span id="successText">Student added successfully!</span>';
+      }, 3000);
+    }
+
+    // Form submission
+    form.addEventListener('submit', function(e) {
+      e.preventDefault();
+      
+      // Show loading state
+      const submitBtn = this.querySelector('button[type="submit"]');
+      const originalText = submitBtn.innerHTML;
+      submitBtn.innerHTML = '<span class="loading"></span> Adding Student...';
+      submitBtn.disabled = true;
+      
+      // Collect form data
+      const formData = {
+        studentName: document.getElementById('studentName').value,
+        studentId: document.getElementById('studentId').value,
+        studentClass: document.getElementById('studentClass').value,
+        studentMobile: document.getElementById('studentMobile').value,
+        parentMobile: document.getElementById('parentMobile').value,
+        timestamp: new Date().toISOString()
+      };
+      
+      // Save to students list in localStorage
+      saveStudentToDatabase(formData);
+      
+      // Simulate API call
+      setTimeout(() => {
+        // Show success message
+        showSuccessMessage('Student added successfully!', '✅');
+        
+        // Clear form and saved data
+        this.reset();
+        localStorage.removeItem('studentFormData');
+        
+        // Reset button
+        submitBtn.innerHTML = originalText;
+        submitBtn.disabled = false;
+        
+        // Update class statistics in localStorage
+        updateClassStatistics(formData.studentClass);
+      }, 1500);
+    });
+
+    // Save student to database (localStorage)
+    function saveStudentToDatabase(studentData) {
+      // Get existing students or initialize empty array
+      const existingStudents = JSON.parse(localStorage.getItem('students')) || [];
+      
+      // Add new student
+      existingStudents.push(studentData);
+      
+      // Save back to localStorage
+      localStorage.setItem('students', JSON.stringify(existingStudents));
+    }
+
+    // Update class statistics
+    function updateClassStatistics(className) {
+      // Get existing class statistics or initialize empty object
+      const classStats = JSON.parse(localStorage.getItem('classStats')) || {};
+      
+      // Initialize class if it doesn't exist
+      if (!classStats[className]) {
+        classStats[className] = {
+          studentCount: 0,
+          testsCount: 0,
+          assignmentsCount: 0,
+          avgScore: 0
+        };
+      }
+      
+      // Update student count
+      classStats[className].studentCount += 1;
+      
+      // Save updated statistics
+      localStorage.setItem('classStats', JSON.stringify(classStats));
+    }
+
+    // Generate student ID function
+    function generateStudentId() {
+      const prefix = 'SOHA';
+      const year = new Date().getFullYear();
+      const random = Math.floor(1000 + Math.random() * 9000);
+      const studentId = `${prefix}${year}${random}`;
+      document.getElementById('studentId').value = studentId;
+      
+      // Auto-save the generated ID
+      saveFormData();
+      showAutoSaveIndicator();
+    }
+
+    // View all students function
+    function viewAllStudents() {
+      // Redirect to teacher classes page
+      window.location.href = 'teacher-classes.html';
+    }
+  </script>
+</body>
+</html>
