@@ -1,0 +1,1083 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Add Questions - Soham Teacher Dashboard</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    body {
+      background: #f5f7fa;
+      color: #333;
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+
+    header {
+      background: #2563eb;
+      color: white;
+      padding: 15px 30px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+      position: relative;
+      z-index: 100;
+    }
+
+    header h1 {
+      font-size: 1.8rem;
+      font-weight: 700;
+    }
+
+    /* Hamburger Menu Styles */
+    .hamburger {
+      background: none;
+      border: none;
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      width: 30px;
+      height: 21px;
+      padding: 0;
+    }
+
+    .hamburger span {
+      display: block;
+      height: 3px;
+      width: 100%;
+      background-color: white;
+      border-radius: 3px;
+      transition: all 0.3s ease;
+    }
+
+    /* Side Navigation Panel */
+    .side-nav {
+      position: fixed;
+      top: 0;
+      right: -300px;
+      width: 300px;
+      height: 100vh;
+      background: linear-gradient(to bottom, #2563eb, #1e3a8a);
+      box-shadow: -5px 0 15px rgba(0, 0, 0, 0.1);
+      transition: right 0.4s ease;
+      z-index: 1000;
+      padding-top: 70px;
+    }
+
+    .side-nav.active {
+      right: 0;
+    }
+
+    .side-nav ul {
+      list-style: none;
+      padding: 0;
+    }
+
+    .side-nav ul li {
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .side-nav ul li a {
+      display: block;
+      color: white;
+      text-decoration: none;
+      padding: 15px 30px;
+      font-size: 1.1rem;
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .side-nav ul li a:hover {
+      background-color: rgba(255, 255, 255, 0.1);
+      padding-left: 40px;
+    }
+
+    .nav-icon {
+      font-size: 1.2rem;
+      width: 20px;
+      text-align: center;
+    }
+
+    .overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.5);
+      z-index: 999;
+      opacity: 0;
+      visibility: hidden;
+      transition: all 0.3s ease;
+    }
+
+    .overlay.active {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    /* Dashboard Styles */
+    .dashboard {
+      padding: 30px 20px;
+      max-width: 1200px;
+      margin: auto;
+    }
+
+    .welcome-section {
+      background: linear-gradient(to right, #2563eb, #1e3a8a);
+      color: white;
+      padding: 30px;
+      border-radius: 15px;
+      margin-bottom: 30px;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .welcome-section::before {
+      content: "";
+      position: absolute;
+      top: -50%;
+      right: -50%;
+      width: 100%;
+      height: 200%;
+      background: rgba(255, 255, 255, 0.1);
+      transform: rotate(30deg);
+    }
+
+    .welcome-section h2 {
+      font-size: 2.2rem;
+      margin-bottom: 10px;
+      position: relative;
+    }
+
+    .welcome-section p {
+      font-size: 1.2rem;
+      opacity: 0.9;
+      position: relative;
+    }
+
+    /* Form Container */
+    .form-container {
+      background: white;
+      border-radius: 15px;
+      padding: 40px;
+      margin-bottom: 30px;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+      position: relative;
+    }
+
+    .form-header {
+      display: flex;
+      align-items: center;
+      margin-bottom: 30px;
+      padding-bottom: 20px;
+      border-bottom: 1px solid #e2e8f0;
+    }
+
+    .form-icon {
+      background: #2563eb;
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-right: 20px;
+      font-size: 1.8rem;
+      color: white;
+    }
+
+    .form-title {
+      color: #1e3a8a;
+      font-size: 1.8rem;
+      font-weight: 700;
+    }
+
+    .form-subtitle {
+      color: #64748b;
+      font-size: 1rem;
+      margin-top: 5px;
+    }
+
+    /* Question Form Styles */
+    .question-container {
+      background: white;
+      border-radius: 15px;
+      padding: 30px;
+      margin-bottom: 25px;
+      box-shadow: 0 3px 10px rgba(0,0,0,0.05);
+      border-left: 4px solid #2563eb;
+    }
+
+    .question-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+      padding-bottom: 15px;
+      border-bottom: 1px solid #e2e8f0;
+    }
+
+    .question-number {
+      font-size: 1.4rem;
+      font-weight: 700;
+      color: #1e3a8a;
+    }
+
+    .question-status {
+      background: #f1f5f9;
+      padding: 5px 12px;
+      border-radius: 20px;
+      font-size: 0.9rem;
+      color: #475569;
+    }
+
+    .question-status.complete {
+      background: #d1fae5;
+      color: #065f46;
+    }
+
+    .question-form {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 20px;
+    }
+
+    .form-group {
+      margin-bottom: 0;
+    }
+
+    .form-group label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 600;
+      color: #1e3a8a;
+      font-size: 1rem;
+    }
+
+    .form-control {
+      width: 100%;
+      padding: 14px 16px;
+      border: 1px solid #d1d5db;
+      border-radius: 10px;
+      font-size: 1rem;
+      transition: all 0.3s ease;
+      background: #f8fafc;
+    }
+
+    .form-control:focus {
+      outline: none;
+      border-color: #2563eb;
+      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+      background: white;
+    }
+
+    .form-control::placeholder {
+      color: #94a3b8;
+    }
+
+    textarea.form-control {
+      resize: vertical;
+      min-height: 100px;
+    }
+
+    .options-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 15px;
+    }
+
+    .option-group {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 15px;
+      background: #f8fafc;
+      border-radius: 10px;
+      border: 1px solid #e2e8f0;
+    }
+
+    .option-label {
+      font-weight: 700;
+      color: #1e3a8a;
+      min-width: 30px;
+    }
+
+    .option-input {
+      flex: 1;
+      border: none;
+      background: transparent;
+      padding: 8px 0;
+      font-size: 1rem;
+    }
+
+    .option-input:focus {
+      outline: none;
+    }
+
+    .correct-option {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      margin-top: 10px;
+    }
+
+    .correct-option label {
+      font-weight: 600;
+      color: #1e3a8a;
+    }
+
+    .correct-select {
+      padding: 10px 15px;
+      border: 1px solid #d1d5db;
+      border-radius: 8px;
+      background: #f8fafc;
+      font-size: 1rem;
+    }
+
+    .correct-select:focus {
+      outline: none;
+      border-color: #2563eb;
+    }
+
+    .marks-input {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-top: 10px;
+    }
+
+    .marks-input label {
+      font-weight: 600;
+      color: #1e3a8a;
+    }
+
+    .marks-input input {
+      width: 80px;
+      padding: 8px 12px;
+      border: 1px solid #d1d5db;
+      border-radius: 8px;
+      background: #f8fafc;
+      font-size: 1rem;
+    }
+
+    .marks-input input:focus {
+      outline: none;
+      border-color: #2563eb;
+    }
+
+    /* Navigation Controls */
+    .navigation-controls {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 30px;
+      padding-top: 20px;
+      border-top: 1px solid #e2e8f0;
+    }
+
+    .btn {
+      background: #2563eb;
+      color: white;
+      border: none;
+      padding: 14px 28px;
+      border-radius: 10px;
+      cursor: pointer;
+      font-weight: 600;
+      transition: all 0.3s ease;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      font-size: 1rem;
+    }
+
+    .btn:hover {
+      background: #1e3a8a;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2);
+    }
+
+    .btn-success {
+      background: #10b981;
+    }
+
+    .btn-success:hover {
+      background: #059669;
+      box-shadow: 0 4px 12px rgba(16, 185, 129, 0.2);
+    }
+
+    .btn-secondary {
+      background: #f1f5f9;
+      color: #475569;
+    }
+
+    .btn-secondary:hover {
+      background: #e2e8f0;
+      color: #334155;
+      box-shadow: 0 4px 12px rgba(148, 163, 184, 0.2);
+    }
+
+    .btn-outline {
+      background: transparent;
+      color: #2563eb;
+      border: 1px solid #2563eb;
+    }
+
+    .btn-outline:hover {
+      background: #2563eb;
+      color: white;
+    }
+
+    .progress-section {
+      background: white;
+      border-radius: 15px;
+      padding: 25px;
+      margin-bottom: 30px;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+    }
+
+    .progress-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 15px;
+    }
+
+    .progress-title {
+      font-size: 1.3rem;
+      font-weight: 700;
+      color: #1e3a8a;
+    }
+
+    .progress-stats {
+      font-size: 1rem;
+      color: #64748b;
+    }
+
+    .progress-bar {
+      height: 10px;
+      background: #e2e8f0;
+      border-radius: 5px;
+      overflow: hidden;
+    }
+
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(to right, #2563eb, #1e3a8a);
+      border-radius: 5px;
+      transition: width 0.5s ease;
+    }
+
+    footer {
+      background: #1e3a8a;
+      color: white;
+      text-align: center;
+      padding: 30px;
+      margin-top: 50px;
+    }
+
+    footer p {
+      font-size: 1rem;
+    }
+
+    /* Success Message */
+    .success-message {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      background: #10b981;
+      color: white;
+      padding: 15px 25px;
+      border-radius: 10px;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      z-index: 1000;
+      transform: translateX(150%);
+      transition: transform 0.3s ease;
+    }
+
+    .success-message.show {
+      transform: translateX(0);
+    }
+
+    .success-icon {
+      font-size: 1.5rem;
+    }
+
+    /* Responsive styles */
+    @media (max-width: 768px) {
+      header {
+        padding: 15px 20px;
+      }
+      
+      .welcome-section h2 {
+        font-size: 1.8rem;
+      }
+      
+      .welcome-section p {
+        font-size: 1rem;
+      }
+      
+      .options-grid {
+        grid-template-columns: 1fr;
+      }
+      
+      .question-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+      }
+      
+      .navigation-controls {
+        flex-direction: column;
+        gap: 15px;
+      }
+      
+      .navigation-controls .btn {
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Soham - Teacher Dashboard</h1>
+    <button class="hamburger" id="hamburger">
+      <span></span>
+      <span></span>
+      <span></span>
+    </button>
+  </header>
+
+  <!-- Side Navigation -->
+  <div class="side-nav" id="sideNav">
+    <ul>
+      <li><a href="teacher-dashboard.html"><span class="nav-icon">📊</span>Dashboard</a></li>
+      <li><a href="teacher-classes.html"><span class="nav-icon">🏫</span>My Classes</a></li>
+      <li><a href="add-student.html"><span class="nav-icon">👨‍🎓</span>Add Student</a></li>
+      <li><a href="create-test.html"><span class="nav-icon">✏️</span>Create Test</a></li>
+      <li><a href="teacher-scores.html"><span class="nav-icon">📝</span>Student Scores</a></li>
+      <li><a href="teacher-resources.html"><span class="nav-icon">📚</span>Resources</a></li>
+      <li><a href="my-account.html"><span class="nav-icon">👤</span>My Account</a></li>
+      <li><a href="#" onclick="logout()"><span class="nav-icon">🚪</span>Logout</a></li>
+    </ul>
+  </div>
+
+  <!-- Overlay for closing the menu when clicking outside -->
+  <div class="overlay" id="overlay"></div>
+
+  <!-- Success Message -->
+  <div class="success-message" id="successMessage">
+    <span class="success-icon">✅</span>
+    <span id="successText">Question saved successfully!</span>
+  </div>
+
+  <main class="dashboard">
+    <section class="welcome-section">
+      <h2>Add Questions to Test</h2>
+      <p id="testInfo">Complete your test by adding questions</p>
+    </section>
+
+    <div class="progress-section">
+      <div class="progress-header">
+        <div class="progress-title">Question Progress</div>
+        <div class="progress-stats" id="progressStats">0/0 questions completed</div>
+      </div>
+      <div class="progress-bar">
+        <div class="progress-fill" id="progressFill" style="width: 0%"></div>
+      </div>
+    </div>
+
+    <div class="form-container">
+      <div class="form-header">
+        <div class="form-icon">❓</div>
+        <div>
+          <div class="form-title" id="currentQuestionTitle">Question 1</div>
+          <div class="form-subtitle">Add question details and options</div>
+        </div>
+      </div>
+
+      <div id="questionsContainer">
+        <!-- Questions will be dynamically generated here -->
+      </div>
+
+      <div class="navigation-controls">
+        <button class="btn btn-secondary" id="prevBtn" onclick="navigateQuestion(-1)">
+          <span>Previous Question</span>
+        </button>
+        <div>
+          <button class="btn btn-outline" onclick="saveForLater()">
+            <span>Save for Later</span>
+          </button>
+          <button class="btn btn-success" id="nextBtn" onclick="navigateQuestion(1)">
+            <span>Next Question</span>
+          </button>
+          <button class="btn btn-success" id="finishBtn" onclick="finishTest()" style="display: none;">
+            <span>Finish Test</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <footer>
+    <p>&copy; 2023 Soham - Entrance Exam Practice. All rights reserved.</p>
+  </footer>
+
+  <script>
+    // SQL Database Schema (for reference)
+    /*
+    CREATE TABLE tests (
+        test_id INT AUTO_INCREMENT PRIMARY KEY,
+        teacher_id INT,
+        title VARCHAR(255),
+        class_id INT,
+        test_date DATE,
+        duration INT,
+        total_marks INT,
+        instructions TEXT,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    );
+
+    CREATE TABLE questions (
+        question_id INT AUTO_INCREMENT PRIMARY KEY,
+        test_id INT,
+        question_number INT,
+        question_text TEXT,
+        option_a TEXT,
+        option_b TEXT,
+        option_c TEXT,
+        option_d TEXT,
+        correct_option ENUM('A', 'B', 'C', 'D'),
+        marks INT DEFAULT 1,
+        FOREIGN KEY (test_id) REFERENCES tests(test_id)
+    );
+    */
+
+    // Check if user is logged in and is a teacher
+    if (localStorage.getItem("isLoggedIn") !== "true" || localStorage.getItem("userRole") !== "teacher") {
+      window.location.href = "select-role.html";
+    }
+
+    // Get test data from localStorage
+    const testData = JSON.parse(localStorage.getItem('testFormData')) || {};
+    const numberOfQuestions = parseInt(testData.numberOfQuestions) || 1;
+    let currentQuestion = 1;
+    let questionsData = JSON.parse(localStorage.getItem('questionsData')) || {};
+    let currentTestId = localStorage.getItem('currentTestId') || null;
+
+    // Logout function
+    function logout() {
+      // Show loading state
+      const logoutBtn = event.target;
+      const originalText = logoutBtn.innerHTML;
+      logoutBtn.innerHTML = '<span class="loading"></span> Logging out...';
+      logoutBtn.disabled = true;
+      
+      setTimeout(() => {
+        localStorage.removeItem("isLoggedIn");
+        localStorage.removeItem("userRole");
+        window.location.href = "login.html";
+      }, 1000);
+    }
+
+    // Hamburger menu functionality
+    const hamburger = document.getElementById('hamburger');
+    const sideNav = document.getElementById('sideNav');
+    const overlay = document.getElementById('overlay');
+
+    hamburger.addEventListener('click', () => {
+      sideNav.classList.toggle('active');
+      overlay.classList.toggle('active');
+      document.body.style.overflow = sideNav.classList.contains('active') ? 'hidden' : 'auto';
+    });
+
+    overlay.addEventListener('click', () => {
+      sideNav.classList.remove('active');
+      overlay.classList.remove('active');
+      document.body.style.overflow = 'auto';
+    });
+
+    // Close menu when clicking on a link
+    const navLinks = document.querySelectorAll('.side-nav a');
+    navLinks.forEach(link => {
+      link.addEventListener('click', () => {
+        sideNav.classList.remove('active');
+        overlay.classList.remove('active');
+        document.body.style.overflow = 'auto';
+      });
+    });
+
+    // Initialize the page
+    document.addEventListener('DOMContentLoaded', function() {
+      // Create test in database if not exists
+      createTestInDatabase();
+      
+      // Update test info
+      document.getElementById('testInfo').textContent = 
+        `Test: ${testData.testTitle || 'Untitled Test'} | ${numberOfQuestions} Questions`;
+      
+      // Generate question forms
+      generateQuestionForms();
+      
+      // Update progress
+      updateProgress();
+      
+      // Load saved data if exists
+      loadSavedQuestions();
+    });
+
+    // Create test in database (simulated)
+    function createTestInDatabase() {
+      if (!currentTestId) {
+        // Generate a test ID (in real app, this would come from the database)
+        currentTestId = 'TEST_' + Date.now();
+        localStorage.setItem('currentTestId', currentTestId);
+        
+        // SQL Query for creating test
+        const sqlQuery = `
+INSERT INTO tests (teacher_id, title, class_id, test_date, duration, total_marks, instructions) 
+VALUES (
+  ${getCurrentTeacherId()}, 
+  '${escapeSQL(testData.testTitle || 'Untitled Test')}', 
+  ${getClassId(testData.testClass)}, 
+  '${testData.testDate || '2023-12-31'}', 
+  ${testData.testDuration || 60}, 
+  ${testData.totalMarks || 100}, 
+  '${escapeSQL(testData.instructions || '')}'
+);`;
+        
+        // Simulate database insertion (no display to user)
+        console.log("Executing SQL:", sqlQuery);
+        
+        // In a real application, you would send this to your backend
+        // fetch('/api/tests', { method: 'POST', body: JSON.stringify(testData) })
+      }
+    }
+
+    // Generate question forms based on number of questions
+    function generateQuestionForms() {
+      const container = document.getElementById('questionsContainer');
+      container.innerHTML = '';
+      
+      for (let i = 1; i <= numberOfQuestions; i++) {
+        const questionHTML = `
+          <div class="question-container" id="question-${i}" ${i > 1 ? 'style="display: none;"' : ''}>
+            <div class="question-header">
+              <div class="question-number">Question ${i}</div>
+              <div class="question-status" id="status-${i}">Incomplete</div>
+            </div>
+            <div class="question-form">
+              <div class="form-group">
+                <label for="question-${i}-text">Question Text</label>
+                <textarea id="question-${i}-text" class="form-control" placeholder="Enter your question here..."></textarea>
+              </div>
+              
+              <div class="form-group">
+                <label>Options</label>
+                <div class="options-grid">
+                  <div class="option-group">
+                    <span class="option-label">A</span>
+                    <input type="text" id="question-${i}-option-a" class="option-input" placeholder="Option A">
+                  </div>
+                  <div class="option-group">
+                    <span class="option-label">B</span>
+                    <input type="text" id="question-${i}-option-b" class="option-input" placeholder="Option B">
+                  </div>
+                  <div class="option-group">
+                    <span class="option-label">C</span>
+                    <input type="text" id="question-${i}-option-c" class="option-input" placeholder="Option C">
+                  </div>
+                  <div class="option-group">
+                    <span class="option-label">D</span>
+                    <input type="text" id="question-${i}-option-d" class="option-input" placeholder="Option D">
+                  </div>
+                </div>
+              </div>
+              
+              <div class="form-group">
+                <div class="correct-option">
+                  <label for="question-${i}-correct">Correct Answer:</label>
+                  <select id="question-${i}-correct" class="correct-select">
+                    <option value="">Select correct option</option>
+                    <option value="A">Option A</option>
+                    <option value="B">Option B</option>
+                    <option value="C">Option C</option>
+                    <option value="D">Option D</option>
+                  </select>
+                </div>
+              </div>
+              
+              <div class="form-group">
+                <div class="marks-input">
+                  <label for="question-${i}-marks">Marks:</label>
+                  <input type="number" id="question-${i}-marks" value="1" min="1">
+                </div>
+              </div>
+            </div>
+          </div>
+        `;
+        container.innerHTML += questionHTML;
+      }
+    }
+
+    // Navigate between questions
+    function navigateQuestion(direction) {
+      // Save current question before navigating
+      saveQuestion(currentQuestion);
+      
+      // Hide current question
+      document.getElementById(`question-${currentQuestion}`).style.display = 'none';
+      
+      // Update current question
+      currentQuestion += direction;
+      
+      // Show new question
+      document.getElementById(`question-${currentQuestion}`).style.display = 'block';
+      document.getElementById('currentQuestionTitle').textContent = `Question ${currentQuestion}`;
+      
+      // Update navigation buttons
+      updateNavigationButtons();
+      
+      // Update progress
+      updateProgress();
+    }
+
+    // Update navigation buttons based on current question
+    function updateNavigationButtons() {
+      const prevBtn = document.getElementById('prevBtn');
+      const nextBtn = document.getElementById('nextBtn');
+      const finishBtn = document.getElementById('finishBtn');
+      
+      // Previous button
+      if (currentQuestion === 1) {
+        prevBtn.disabled = true;
+        prevBtn.style.opacity = '0.5';
+      } else {
+        prevBtn.disabled = false;
+        prevBtn.style.opacity = '1';
+      }
+      
+      // Next/Finish buttons
+      if (currentQuestion === numberOfQuestions) {
+        nextBtn.style.display = 'none';
+        finishBtn.style.display = 'inline-flex';
+      } else {
+        nextBtn.style.display = 'inline-flex';
+        finishBtn.style.display = 'none';
+      }
+    }
+
+    // Save question data to SQL database
+    function saveQuestion(questionNum) {
+      const questionData = {
+        text: document.getElementById(`question-${questionNum}-text`).value,
+        options: {
+          A: document.getElementById(`question-${questionNum}-option-a`).value,
+          B: document.getElementById(`question-${questionNum}-option-b`).value,
+          C: document.getElementById(`question-${questionNum}-option-c`).value,
+          D: document.getElementById(`question-${questionNum}-option-d`).value
+        },
+        correct: document.getElementById(`question-${questionNum}-correct`).value,
+        marks: parseInt(document.getElementById(`question-${questionNum}-marks`).value) || 1
+      };
+      
+      // Save to questionsData object
+      questionsData[questionNum] = questionData;
+      
+      // Update question status
+      updateQuestionStatus(questionNum, questionData);
+      
+      // Save to localStorage (temporary)
+      localStorage.setItem('questionsData', JSON.stringify(questionsData));
+      
+      // Generate and execute SQL query (silently in background)
+      if (questionData.text && questionData.correct) {
+        const sqlQuery = generateQuestionSQL(questionNum, questionData);
+        
+        // Simulate database insertion (no display to user)
+        console.log("Executing SQL:", sqlQuery);
+        
+        // In a real application, you would send this to your backend
+        // fetch('/api/questions', { method: 'POST', body: JSON.stringify({
+        //   testId: currentTestId,
+        //   questionNumber: questionNum,
+        //   questionData: questionData
+        // })})
+      }
+    }
+
+    // Generate SQL query for inserting question
+    function generateQuestionSQL(questionNum, questionData) {
+      return `
+INSERT INTO questions (test_id, question_number, question_text, option_a, option_b, option_c, option_d, correct_option, marks) 
+VALUES (
+  ${currentTestId}, 
+  ${questionNum}, 
+  '${escapeSQL(questionData.text)}', 
+  '${escapeSQL(questionData.options.A)}', 
+  '${escapeSQL(questionData.options.B)}', 
+  '${escapeSQL(questionData.options.C)}', 
+  '${escapeSQL(questionData.options.D)}', 
+  '${questionData.correct}', 
+  ${questionData.marks}
+)
+ON DUPLICATE KEY UPDATE 
+  question_text = '${escapeSQL(questionData.text)}',
+  option_a = '${escapeSQL(questionData.options.A)}',
+  option_b = '${escapeSQL(questionData.options.B)}',
+  option_c = '${escapeSQL(questionData.options.C)}',
+  option_d = '${escapeSQL(questionData.options.D)}',
+  correct_option = '${questionData.correct}',
+  marks = ${questionData.marks};`;
+    }
+
+    // Escape SQL special characters
+    function escapeSQL(str) {
+      return (str || '').replace(/'/g, "''").replace(/\\/g, "\\\\");
+    }
+
+    // Update question status (complete/incomplete)
+    function updateQuestionStatus(questionNum, questionData) {
+      const statusElement = document.getElementById(`status-${questionNum}`);
+      const isComplete = questionData.text && 
+                         questionData.options.A && 
+                         questionData.options.B && 
+                         questionData.options.C && 
+                         questionData.options.D && 
+                         questionData.correct;
+      
+      if (isComplete) {
+        statusElement.textContent = 'Complete';
+        statusElement.classList.add('complete');
+      } else {
+        statusElement.textContent = 'Incomplete';
+        statusElement.classList.remove('complete');
+      }
+    }
+
+    // Update progress bar and stats
+    function updateProgress() {
+      const completed = Object.values(questionsData).filter(q => 
+        q.text && q.options.A && q.options.B && q.options.C && q.options.D && q.correct
+      ).length;
+      
+      const progressPercent = (completed / numberOfQuestions) * 100;
+      
+      document.getElementById('progressStats').textContent = 
+        `${completed}/${numberOfQuestions} questions completed`;
+      document.getElementById('progressFill').style.width = `${progressPercent}%`;
+    }
+
+    // Load saved questions from localStorage
+    function loadSavedQuestions() {
+      for (let i = 1; i <= numberOfQuestions; i++) {
+        if (questionsData[i]) {
+          document.getElementById(`question-${i}-text`).value = questionsData[i].text || '';
+          document.getElementById(`question-${i}-option-a`).value = questionsData[i].options.A || '';
+          document.getElementById(`question-${i}-option-b`).value = questionsData[i].options.B || '';
+          document.getElementById(`question-${i}-option-c`).value = questionsData[i].options.C || '';
+          document.getElementById(`question-${i}-option-d`).value = questionsData[i].options.D || '';
+          document.getElementById(`question-${i}-correct`).value = questionsData[i].correct || '';
+          document.getElementById(`question-${i}-marks`).value = questionsData[i].marks || 1;
+          
+          updateQuestionStatus(i, questionsData[i]);
+        }
+      }
+      updateProgress();
+      updateNavigationButtons();
+    }
+
+    // Save for later
+    function saveForLater() {
+      saveQuestion(currentQuestion);
+      showSuccessMessage('Progress saved successfully!');
+    }
+
+    // Finish test
+    function finishTest() {
+      saveQuestion(currentQuestion);
+      
+      // Check if all questions are complete
+      const completed = Object.values(questionsData).filter(q => 
+        q.text && q.options.A && q.options.B && q.options.C && q.options.D && q.correct
+      ).length;
+      
+      if (completed === numberOfQuestions) {
+        showSuccessMessage('Test completed successfully!');
+        
+        // In a real app, you would redirect to a confirmation page or dashboard
+        setTimeout(() => {
+          window.location.href = 'teacher-dashboard.html';
+        }, 1500);
+      } else {
+        const incomplete = numberOfQuestions - completed;
+        showSuccessMessage(`You have ${incomplete} incomplete question(s). You can still finish.`, '⚠️');
+        // In a real app, you might ask for confirmation
+        setTimeout(() => {
+          window.location.href = 'teacher-dashboard.html';
+        }, 2000);
+      }
+    }
+
+    // Show success message
+    function showSuccessMessage(message, icon = '✅') {
+      const successMessage = document.getElementById('successMessage');
+      const successText = document.getElementById('successText');
+      
+      successMessage.innerHTML = `<span class="success-icon">${icon}</span><span>${message}</span>`;
+      successMessage.classList.add('show');
+      
+      setTimeout(() => {
+        successMessage.classList.remove('show');
+      }, 3000);
+    }
+
+    // Helper functions for SQL data
+    function getCurrentTeacherId() {
+      // In a real app, this would come from the user session
+      return 1; // Default teacher ID
+    }
+
+    function getClassId(className) {
+      // Map class names to IDs
+      const classMap = {
+        '11th-mhtcet-pcm': 1,
+        '11th-mhtcet-pcb': 2,
+        '11th-jee': 3,
+        '11th-neet': 4,
+        '12th-mhtcet-pcm': 5,
+        '12th-mhtcet-pcb': 6,
+        '12th-jee': 7,
+        '12th-neet': 8
+      };
+      return classMap[className] || 1;
+    }
+
+    // Auto-save when leaving a question
+    document.addEventListener('focusout', function(e) {
+      if (e.target.classList.contains('form-control') || 
+          e.target.classList.contains('option-input') ||
+          e.target.classList.contains('correct-select') ||
+          e.target.type === 'number') {
+        saveQuestion(currentQuestion);
+        updateProgress();
+      }
+    });
+  </script>
+</body>
+</html>
